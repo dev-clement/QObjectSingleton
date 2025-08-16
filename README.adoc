@@ -1,0 +1,50 @@
+= QObject singleton value
+In this article we'll see how we can use QObject singleton class in order to wrapping around data that changes frequently
+
+:toc:
+:sectnums:
+
+== Introduction
+We'll see how we expose data of a QML using the Cpp side and the `QObject` class. 
+
+IMPORTANT: That let you wrap around data that changes frequently. And we'll be able to propagate changes from the Cpp to the QML file
+
+== QJSValue vs QObject
+Using the QJSValue you can expose some properties or even value from the Cpp side to the QML, however, this can be done with values that changes not that often. If you decide to use `QObject` as a singleton, you would be able to pass values that often changes it will then be able to propagate data from Cpp to QML.
+
+== Registering the object
+One way to register the class into the QML engine can be done using the `qmlRegisterSingletonType` or if you want you can also use the QML macros like:
+
+```cpp
+QML_SINLETON
+QML_ELEMENT
+```
+
+== Using this type on the QML side
+One way to making use of the singleton on the QML side is either by creating a property:
+
+```json
+property var mySingleton: SingletonClass: 
+```
+
+Using the snipped abovr will create a property of type `SingletonClass` what you'll be able to use along your qml file. Once you have it on your qml file, you'll be able to use it to display the data coming from this `SingletonClass` property like this:
+
+```json
+property var myApi: SingletonClass: 
+...
+Text {
+    id: mText2Id
+    anchors.centerIn: parent
+    color: "white"
+    font.pointSize: 30
+    text: myApi.someProperty
+}
+```
+
+Using the snipped above, you'll then be able to use some value from the property `myApi`.
+
+NOTE: The `someProperty` is the property you expose from the Cpp of the application !
+
+IMPORTANT: When you are using a singleton through `QML_SINGLETON` or using the `qmlRegisterSingletonType<>` once you've used this singleton for the first time, QML engine will take care of creating only one instance.
+
+NOTE: In order to register a singleton type, you can either using the `qmlRegisterType<>()` method, or using both of the macro `QML_ELEMENT` as well as `QML_SINGLETON`
